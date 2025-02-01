@@ -1,0 +1,53 @@
+---
+title: "Simulation of Patch Metapopulation Dynamics"
+author: "Kyle Taylor"
+format: html
+---
+
+# Purpose
+
+The purpose of this document is to develop an R version of the metapopulation simulator in Lab 3 of the university course BIOL 431 -  *Population Ecology* taught by Dr. Mark Boyce.
+
+# Dependencies
+```{r}
+library(tidyverse)
+version
+set.seed(789) # set the random seed for reproducible results for students.
+```
+
+# The Landscape Matrix
+
+Let any landscape matrix $M$ be initially represented by an $N\times3$ tibble with the grid coordinate variables $x$ and $y$, and a third Bernoulli variable (0,1), called `present`. We will create a function that allows the user to specify the $x$ and $y$ dimensions of the landscape matrix, and randomly assigns a value of 0 or 1 from a distribution with an expected value of $f_e=\frac{p_{colonization}}{p_{colonization}+p_{extinction}}$:
+
+```{r}
+create_landscape <- function(x = 5, y = 5, p_colonization = 0.5, p_extinction = 0.5) {
+  f_eq <-  (p_colonization) / (p_colonization + p_extinction)
+  return(
+    tibble(crossing(row = seq(1 : x), col = seq(1 : y)),
+                      t0 = as_factor(ifelse(runif(x * y, 0, 1) < f_eq, 1, 0)))
+    )
+}
+```
+
+## Creating a Visual of the Landscape at Time t
+
+```{r}
+create_landscape(x=50,y=50) |> 
+  ggplot(aes(x=row, y=col, fill=t0)) +
+  geom_tile(alpha = 0.7) +
+  scale_fill_manual(values = c("tan","darkgreen"),
+                    labels = c("absent", "present")) +
+  theme_classic() +
+  labs(y="Y", x="X", fill="") +
+  theme(aspect.ratio = 1)
+```
+# Iteration of the Landscape
+
+```{r}
+landscape |> 
+
+```
+
+
+
+
