@@ -18,14 +18,11 @@ draw_landscape <- function(landscape) {
     theme_classic() +
     labs(y="Y", x="X", fill="") +
     theme(aspect.ratio = 1,
-          legend.box = "horizontal",
-          legend.position = "bottom",
-          legend.margin = margin(t=-70),
+          legend.position = "none",
           axis.title = element_blank(),
           axis.ticks = element_blank(),
           axis.text = element_blank(),
           axis.line = element_blank(),
-          
           )
 }
 
@@ -77,7 +74,7 @@ metapop <- function(x=5,
     theme_classic()
   p3 <- ggplot(sim_p,aes(x=t, y=p)) +
     geom_line(color="blue3", linewidth=0.5) +
-    geom_smooth(color="red3", alpha=0.6, se=FALSE, linewidth = 0.5) +
+    geom_smooth(color="red3", alpha=0.6, se=FALSE, linewidth = 0.5, method = "loess", formula = y~x) +
     theme_classic()
   p4 <- ggplot(sim_p, aes(y=p, x="")) +
     geom_boxplot() +
