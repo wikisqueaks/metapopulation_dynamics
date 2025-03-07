@@ -16,7 +16,7 @@ ui <- fluidPage(
       actionButton("run", "Run Simulation")
     ),
     mainPanel(
-      plotOutput("meta_plot"),
+      plotOutput("meta_plot", height = "600px", width = "900px"),
       textOutput("status")  # Status message
     )
   )

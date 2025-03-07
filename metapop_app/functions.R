@@ -9,17 +9,17 @@ create_landscape <- function(x = 5, y = 5, p_occupied = 0.5) {
     )
 }
 
-draw_landscape <- function(landscape) {
+draw_landscape <- function(landscape, col_name) {
   landscape |>
-    ggplot(aes(x=x, y=y, fill=as.factor(t0))) +
+    ggplot(aes(x=x, y=y, fill=as.factor(!!sym(col_name)))) +
     geom_tile(alpha = 0.7) +
     scale_fill_manual(values = c("tan","darkgreen"),
                       labels = c("absent", "present")) +
     theme_classic() +
-    labs(y="Y", x="X", fill="") +
+    labs(fill="") +
     theme(aspect.ratio = 1,
           legend.position = "none",
-          axis.title = element_blank(),
+          axis.title.y = element_blank(),
           axis.ticks = element_blank(),
           axis.text = element_blank(),
           axis.line = element_blank(),
@@ -68,21 +68,22 @@ metapop <- function(x=5,
   sd_sim <- sd(p_vec)
   n_sim <- length(p_vec)
   scotts_bin <- 3.5*sd_sim/(n_sim)^(1/3)
-  p1 <- draw_landscape(sim)
+  last_sim <- names(sim |> select(last_col()))
+  p1 <- draw_landscape(sim,"t0") + labs(x="Initial Landscape")
   p2 <- ggplot(sim_p, aes(x=p)) + 
     geom_histogram(binwidth = scotts_bin, fill="cyan3", color="black", alpha=0.7) +
-    theme_classic()
+    theme_classic() +
+    labs(x="Proportion Occupied")
   p3 <- ggplot(sim_p,aes(x=t, y=p)) +
     geom_line(color="blue3", linewidth=0.5) +
     geom_smooth(color="red3", alpha=0.6, se=FALSE, linewidth = 0.5, method = "loess", formula = y~x) +
-    theme_classic()
-  p4 <- ggplot(sim_p, aes(y=p, x="")) +
-    geom_boxplot() +
-    theme_classic() + 
-    labs(x="")
+    theme_classic() +
+    labs(x="Time Periods", y="Proportion Occupied")
+  p4 <- draw_landscape(sim, last_sim) + labs(x="Final Landscape")
+    
   metamodel <- list(simulation = sim,
                   proportions = sim_p,
-                  plot = (p1+p2+p4)/p3
+                  plot = (p1+p2+p4)/p3 + plot_layout(guides = "collect")
                   )
   return(metamodel)
 }
@@ -93,3 +94,6 @@ metapop(x=20,
         starting_proportion = 0.5,
         colonization_rate = 0.7,
         extirpation_rate = 0.3)
+
+sim <- simulate(create_landscape())
+
