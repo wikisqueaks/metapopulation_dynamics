@@ -64,13 +64,16 @@ metapop <- function(x=5,
                   colonization_rate = colonization_rate,
                   extirpation_rate = extirpation_rate) 
   sim_p <- create_proportions(sim)
+  
+  sim_plot <- sim_p |> slice(3:(n() - 3))  
+  
   p_vec <- sim_p$p
   sd_sim <- sd(p_vec)
   n_sim <- length(p_vec)
   scotts_bin <- 3.5*sd_sim/(n_sim)^(1/3)
   last_sim <- names(sim |> select(last_col()))
   p1 <- draw_landscape(sim,"t0") + labs(x="Initial Landscape")
-  p2 <- ggplot(sim_p, aes(x=p)) + 
+  p2 <- ggplot(sim_plot, aes(x=p)) + 
     geom_histogram(binwidth = scotts_bin, fill="cyan3", color="black", alpha=0.7) +
     theme_classic() +
     labs(x="Proportion Occupied")
@@ -88,12 +91,14 @@ metapop <- function(x=5,
   return(metamodel)
 }
 
-metapop(x=20,
-        y=20,
+metapop(x=50,
+        y=50,
         iterations = 200,
         starting_proportion = 0.5,
         colonization_rate = 0.7,
         extirpation_rate = 0.3)
 
-sim <- simulate(create_landscape())
+
+# for testing
+# sim <- simulate(create_landscape())
 
